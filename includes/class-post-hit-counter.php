@@ -2,10 +2,10 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class Post_View_Counter {
+class Post_Hit_Counter {
 
 	/**
-	 * The single instance of Post_View_Counter.
+	 * The single instance of Post_Hit_Counter.
 	 * @var 	object
 	 * @access  private
 	 * @since 	1.0.0
@@ -68,7 +68,7 @@ class Post_View_Counter {
 	 */
 	public function __construct ( $file = '', $version = '1.0.0' ) {
 		$this->_version = $version;
-		$this->_token = 'post_view_counter';
+		$this->_token = 'post_hit_counter';
 		$this->_field = '_post_views';
 
 		// Load plugin environment variables
@@ -136,7 +136,7 @@ class Post_View_Counter {
 	 */
 	public function add_post_views_column ( $columns = array() ) {
 
-		$columns['views'] = __( 'Views', 'post-view-counter' );
+		$columns['views'] = __( 'Views', 'post-hit-counter' );
 
 		return $columns;
 	}
@@ -173,7 +173,7 @@ class Post_View_Counter {
 
 			?>
 			<div class="misc-pub-section misc-pub-post-views" id="post-views">
-				<?php _e( 'Views:', 'post-view-counter' ); ?>
+				<?php _e( 'Views:', 'post-hit-counter' ); ?>
 				<strong><?php echo esc_html( $views ); ?></strong>
 			</div>
 			<?php
@@ -202,7 +202,7 @@ class Post_View_Counter {
 	 * @return  void
 	 */
 	public function load_localisation () {
-		load_plugin_textdomain( 'post-view-counter', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+		load_plugin_textdomain( 'post-hit-counter', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 	} // End load_localisation ()
 
 	/**
