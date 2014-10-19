@@ -1,4 +1,4 @@
-# Post-View-Counter
+# Post View Counter
 
 A counter to track how many times your posts are viewed.
 
