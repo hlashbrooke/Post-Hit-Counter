@@ -26,14 +26,19 @@ Installing "Post Hit Counter" can be done either by searching for "Post Hit Coun
 1. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
+== Screenshots ==
+
+1. The new 'Views' column displayed on the posts list table
+2. The view count displayed on the post edit screen
+
 == Changelog ==
 
 = 1.0 =
-* 2014-10-21
+* 2014-10-22
 * Initial release #boom
 
 == Upgrade Notice ==
 
 = 1.0 =
-* 2014-10-21
+* 2014-10-22
 * Initial release #boom
