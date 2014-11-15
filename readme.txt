@@ -12,7 +12,9 @@ A counter to track how many times your posts are viewed.
 
 == Description ==
 
-"Post Hit Counter" does what it says on the tin - it counts how many hits your posts receive. Hit counts are displayed in a new column in the post list table in the dashboard as well as on the post edit screen. Currently this plugin only counts the hits for the built-in `post` post type.
+"Post Hit Counter" does what it says on the tin - it counts how many hits your posts receive. Hit counts are displayed in a new column in the post list table in the dashboard as well as in the submit box on the post edit screen. By default, this plugin counts hits for *all* post types, including pages, but you can select the post types for which you would like to track hits.
+
+This is not meant as a replacement for more advanced analytics plugins - it is merely a simple counter so you can see which of your posts are more popular without diving too deeply into complicated viewing statistics.
 
 *This plugin was created for [a workshop](http://2014.capetown.wordcamp.org/session/building-your-first-wordpress-plugin/) I ran at WordCamp Cape Town 2014 and as such it is meant to act more as a demo then a full-featured plugin. I will flesh it out more over time, but please bear that in mind when using it.*
 
@@ -32,6 +34,11 @@ Installing "Post Hit Counter" can be done either by searching for "Post Hit Coun
 2. The view count displayed on the post edit screen
 
 == Changelog ==
+
+= 1.1 =
+* 2014-09-05
+* [NEW] Adding support for all post types
+* [NEW] Adding option to select which post types will be active
 
 = 1.0 =
 * 2014-10-22

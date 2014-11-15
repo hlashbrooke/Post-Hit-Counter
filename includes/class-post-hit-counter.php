@@ -13,6 +13,14 @@ class Post_Hit_Counter {
 	private static $_instance = null;
 
 	/**
+	 * Settings class object
+	 * @var     object
+	 * @access  public
+	 * @since   1.1.0
+	 */
+	public $settings = null;
+
+	/**
 	 * The version number.
 	 * @var     string
 	 * @access  public
@@ -61,6 +69,14 @@ class Post_Hit_Counter {
 	public $assets_url;
 
 	/**
+	 * The active post tyes for this plugin.
+	 * @var     string
+	 * @access  public
+	 * @since   1.1.0
+	 */
+	public $active_types = false;
+
+	/**
 	 * Constructor function.
 	 * @access  public
 	 * @since   1.0.0
@@ -77,14 +93,20 @@ class Post_Hit_Counter {
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $this->file ) ) );
 
+		$this->active_types = apply_filters( $this->_token . '_active_posttypes', get_option( 'phc_active_posttypes', false ) );
+
 		register_activation_hook( $this->file, array( $this, 'install' ) );
 
 		// Increment post view count on single post page
 		add_action( 'wp', array( $this, 'count_post_view' ) );
 
 		// Add 'Views' column to posts admin list table
-		add_filter( 'manage_post_posts_columns', array( $this, 'add_post_views_column' ) );
-		add_action( 'manage_post_posts_custom_column', array( $this, 'display_post_views_column' ), 10, 2 );
+		add_filter( 'manage_posts_columns', array( $this, 'add_post_views_column' ) );
+		add_filter( 'manage_pages_columns', array( $this, 'add_post_views_column' ) );
+
+		// Display data in 'Views' column
+		add_action( 'manage_posts_custom_column', array( $this, 'display_post_views_column' ), 10, 2 );
+		add_action( 'manage_pages_custom_column', array( $this, 'display_post_views_column' ), 10, 2 );
 
 		// Add views to post edit screen
 		add_action( 'post_submitbox_misc_actions', array( $this, 'display_post_views_meta' ) );
@@ -92,9 +114,25 @@ class Post_Hit_Counter {
 		// Load admin CSS
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 10, 1 );
 
+		if( ! $this->active_types ) {
+			$post_types = get_post_types();
+		} else {
+			$post_types = $this->active_types;
+		}
+
+		foreach( $post_types as $type ) {
+			add_filter( 'manage_edit-' . $type . '_sortable_columns', array( $this, 'sortable_columns' ) );
+		}
+
+		// Load API for generic admin functions
+		if( is_admin() ) {
+			$this->admin = new Post_Hit_Counter_Admin_API();
+		}
+
 		// Handle localisation
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
+
 	} // End __construct ()
 
 	/**
@@ -103,9 +141,9 @@ class Post_Hit_Counter {
 	 */
 	public function count_post_view () {
 
-		if( is_single() ) {
+		if( is_single() || is_page() ) {
 			global $post;
-			if( isset( $post->ID ) && 'post' == $post->post_type ) {
+			if( isset( $post->ID ) ) {
 				$this->increment_counter( $post->ID );
 			}
 		}
@@ -135,8 +173,11 @@ class Post_Hit_Counter {
 	 * @return array  		  Updated columns
 	 */
 	public function add_post_views_column ( $columns = array() ) {
+		global $typenow;
 
-		$columns['views'] = __( 'Views', 'post-hit-counter' );
+		if( $this->count_post_type( $typenow ) ) {
+			$columns['hits'] = __( 'Hits', 'post-hit-counter' );
+		}
 
 		return $columns;
 	}
@@ -148,16 +189,27 @@ class Post_Hit_Counter {
 	 * @return void
 	 */
 	public function display_post_views_column ( $column = '', $post_id = 0 ) {
+		global $typenow;
 
-		if( 'post' != get_post_type( $post_id ) ) {
-			return;
+		$screen = get_current_screen();
+
+		if( $this->count_post_type( $typenow ) ) {
+			if( 'hits' == $column ) {
+				$views = intval( get_post_meta( $post_id, $this->_field, true ) );
+				echo $views;
+			}
 		}
 
-		if( 'views' == $column ) {
-			$views = intval( get_post_meta( $post_id, $this->_field, true ) );
-			echo $views;
-		}
+	}
 
+	/**
+	 * Add 'Hits' columns to array of sortable columns
+	 * @param  array  $sortable_columns Default array
+	 * @return array                    Modified array
+	 */
+	public function sortable_columns ( $sortable_columns = array() ) {
+		$sortable_columns['hits'] = 'hits';
+		return $sortable_columns;
 	}
 
 	/**
@@ -167,17 +219,36 @@ class Post_Hit_Counter {
 	public function display_post_views_meta () {
 		global $post, $pagenow, $typenow;
 
-		if( 'post.php' == $pagenow && 'post' == $typenow ) {
+		if( 'post.php' == $pagenow && $this->count_post_type( $typenow ) ) {
 
 			$views = intval( get_post_meta( $post->ID, $this->_field, true ) );
 
 			?>
 			<div class="misc-pub-section misc-pub-post-views" id="post-views">
-				<?php _e( 'Views:', 'post-hit-counter' ); ?>
+				<?php _e( 'Hits:', 'post-hit-counter' ); ?>
 				<strong><?php echo esc_html( $views ); ?></strong>
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * Check whether a specified post type must be counted
+	 * @param  string  $post_type Post type to check
+	 * @return boolean            True of post type must be counted
+	 */
+	public function count_post_type ( $post_type = 'post' ) {
+
+		if( ! $post_type ) {
+			return false;
+		}
+
+		if( ! $this->active_types || ( $this->active_types && is_array( $this->active_types ) && in_array( $post_type, $this->active_types ) ) ) {
+			return true;
+		}
+
+		return false;
+
 	}
 
 	/**
@@ -189,7 +260,7 @@ class Post_Hit_Counter {
 	public function admin_enqueue_styles ( $hook = '' ) {
 		global $pagenow, $typenow;
 
-		if( 'post.php' == $pagenow && 'post' == $typenow ) {
+		if( ( 'post.php' == $pagenow && $this->count_post_type( $typenow ) ) || ( isset( $_GET['page'] ) && 'post_hit_counter_settings' == $_GET['page'] ) ) {
 			wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(), $this->_version );
 			wp_enqueue_style( $this->_token . '-admin' );
 		}
