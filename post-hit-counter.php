@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Post Hit Counter
- * Version: 1.1.0
+ * Version: 1.1
  * Plugin URI: https://wordpress.org/plugins/post-hit-counter/
  * Description: A counter to track how many times your posts are viewed.
  * Author: Hugh Lashbrooke
