@@ -69,12 +69,20 @@ class Post_Hit_Counter {
 	public $assets_url;
 
 	/**
-	 * The active post tyes for this plugin.
+	 * The active post types for this plugin.
 	 * @var     string
 	 * @access  public
 	 * @since   1.1.0
 	 */
 	public $active_types = false;
+
+	/**
+	 * The blocked user roles for this plugin.
+	 * @var     string
+	 * @access  public
+	 * @since   1.1.0
+	 */
+	public $blocked_roles = array();
 
 	/**
 	 * Constructor function.
@@ -94,6 +102,7 @@ class Post_Hit_Counter {
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $this->file ) ) );
 
 		$this->active_types = apply_filters( $this->_token . '_active_posttypes', get_option( 'phc_active_posttypes', false ) );
+		$this->blocked_roles = apply_filters( $this->_token . '_blocked_roles', get_option( 'phc_blocked_roles', array() ) );
 
 		register_activation_hook( $this->file, array( $this, 'install' ) );
 
@@ -110,6 +119,12 @@ class Post_Hit_Counter {
 
 		// Add views to post edit screen
 		add_action( 'post_submitbox_misc_actions', array( $this, 'display_post_views_meta' ) );
+
+		// Add views to the admin bar on the frontend
+		add_action( 'admin_bar_menu', array( $this, 'display_post_views_admin_bar' ), 999 );
+
+		// Load frontend CSS
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
 
 		// Load admin CSS
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 10, 1 );
@@ -144,7 +159,9 @@ class Post_Hit_Counter {
 		if( is_single() || is_page() ) {
 			global $post;
 			if( isset( $post->ID ) ) {
-				$this->increment_counter( $post->ID );
+				if( $this->count_post_type( $post->post_type ) && ! $this->block_user_role() ) {
+					$this->increment_counter( $post->ID );
+				}
 			}
 		}
 	}
@@ -202,6 +219,28 @@ class Post_Hit_Counter {
 
 	}
 
+	public function display_post_views_admin_bar ( $wp_admin_bar ) {
+
+		if( is_single() || is_page() ) {
+			global $post;
+			if( isset( $post->ID ) ) {
+				if( $this->count_post_type( $post->post_type ) ) {
+
+					$views = intval( get_post_meta( $post->ID, $this->_field, true ) );
+
+					$args = array(
+						'id'    => 'hit_counter',
+						'title' => sprintf( __( '%1$d Hits', 'post-hit-counter' ), $views ),
+						'href'  => admin_url( 'options-general.php?page=post_hit_counter_settings' ),
+						'meta'  => array( 'class' => 'hit-counter', 'title' => __( 'Post Hit Counter settings', 'post-hit-counter' ) )
+					);
+
+					$wp_admin_bar->add_node( $args );
+				}
+			}
+		}
+	}
+
 	/**
 	 * Add 'Hits' columns to array of sortable columns
 	 * @param  array  $sortable_columns Default array
@@ -235,7 +274,7 @@ class Post_Hit_Counter {
 	/**
 	 * Check whether a specified post type must be counted
 	 * @param  string  $post_type Post type to check
-	 * @return boolean            True of post type must be counted
+	 * @return boolean            True if post type must be counted
 	 */
 	public function count_post_type ( $post_type = 'post' ) {
 
@@ -250,6 +289,54 @@ class Post_Hit_Counter {
 		return false;
 
 	}
+
+	/**
+	 * Check whether a specified (or the current) user role should not be counted
+	 * @param  string  $role User role to check
+	 * @return boolean       True is user role must be blocked from counting hits
+	 */
+	public function block_user_role ( $role = '' ) {
+
+		if( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		if( ! $role ) {
+			if( is_user_logged_in() ) {
+				foreach( (array) $this->blocked_roles as $role ) {
+					if( current_user_can( $role ) ) {
+						return true;
+					}
+				}
+			}
+		} else {
+			if( current_user_can( $role ) ) {
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Load frontend CSS.
+	 * @access  public
+	 * @since   1.1.0
+	 * @return void
+	 */
+	public function enqueue_styles () {
+
+		if( is_single() || is_page() ) {
+			global $post;
+			if( isset( $post->ID ) ) {
+				if( $this->count_post_type( $post->post_type ) ) {
+					wp_register_style( $this->_token . '-frontend', esc_url( $this->assets_url ) . 'css/frontend.css', array(), $this->_version );
+					wp_enqueue_style( $this->_token . '-frontend' );
+				}
+			}
+		}
+	} // End enqueue_styles ()
 
 	/**
 	 * Load admin CSS.

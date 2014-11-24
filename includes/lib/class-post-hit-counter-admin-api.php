@@ -109,7 +109,7 @@ class Post_Hit_Counter_Admin_API {
 			case 'checkbox_multi':
 				foreach( $field['options'] as $k => $v ) {
 					$checked = false;
-					if( in_array( $k, $data ) ) {
+					if( is_array( $data ) && in_array( $k, $data ) ) {
 						$checked = true;
 					}
 					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '" class="checkbox_multi"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label> ';

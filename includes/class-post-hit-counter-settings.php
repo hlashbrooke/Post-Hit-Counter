@@ -107,6 +107,12 @@ class Post_Hit_Counter_Settings {
 
 		}
 
+		global $wp_roles;
+		$roles = array();
+		foreach( $wp_roles->roles as $id => $role ) {
+			$roles[ $id ] = $role['name'];
+		}
+
 		$settings['global'] = array(
 			'title'					=> '',
 			'description'			=> '',
@@ -118,6 +124,14 @@ class Post_Hit_Counter_Settings {
 					'type'			=> 'checkbox_multi',
 					'options'		=> $types,
 					'default'		=> array_keys( $types ),
+				),
+				array(
+					'id' 			=> 'blocked_roles',
+					'label'			=> __( 'Do not count hits for these user roles:', 'post-hit-counter' ),
+					'description'	=> '',
+					'type'			=> 'checkbox_multi',
+					'options'		=> $roles,
+					'default'		=> array(),
 				),
 			)
 		);
