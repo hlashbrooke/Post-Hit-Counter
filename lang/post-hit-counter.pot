@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Post Hit Counter package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Post Hit Counter 1.1.0\n"
+"Project-Id-Version: Post Hit Counter 1.1.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/Post-Hit-Counter\n"
-"POT-Creation-Date: 2014-11-24 13:30:23+00:00\n"
+"POT-Creation-Date: 2014-11-27 05:38:46+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -38,8 +38,8 @@ msgstr ""
 
 #: includes/class-post-hit-counter-settings.php:285
 #: includes/class-post-hit-counter-settings.php:294
-#: includes/class-post-hit-counter.php:404
-#: includes/class-post-hit-counter.php:413
+#: includes/class-post-hit-counter.php:409
+#: includes/class-post-hit-counter.php:418
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
@@ -47,15 +47,17 @@ msgstr ""
 msgid "Hits"
 msgstr ""
 
-#: includes/class-post-hit-counter.php:233
-msgid "%1$d Hits"
-msgstr ""
+#: includes/class-post-hit-counter.php:238
+msgid "1 Hit"
+msgid_plural "%s Hits"
+msgstr[0] ""
+msgstr[1] ""
 
-#: includes/class-post-hit-counter.php:235
+#: includes/class-post-hit-counter.php:240
 msgid "Post Hit Counter settings"
 msgstr ""
 
-#: includes/class-post-hit-counter.php:267
+#: includes/class-post-hit-counter.php:272
 msgid "Hits:"
 msgstr ""
 

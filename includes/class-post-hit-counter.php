@@ -219,6 +219,11 @@ class Post_Hit_Counter {
 
 	}
 
+	/**
+	 * Add 'Hits' section to admin bar on frontend for single posts
+	 * @param  object $wp_admin_bar WordPress admin bar object
+	 * @return void
+	 */
 	public function display_post_views_admin_bar ( $wp_admin_bar ) {
 
 		if( is_single() || is_page() ) {
@@ -230,7 +235,7 @@ class Post_Hit_Counter {
 
 					$args = array(
 						'id'    => 'hit_counter',
-						'title' => sprintf( __( '%1$d Hits', 'post-hit-counter' ), $views ),
+						'title' => sprintf( _n( '1 Hit', '%s Hits', $views, 'post-hit-counter' ), $views ),
 						'href'  => admin_url( 'options-general.php?page=post_hit_counter_settings' ),
 						'meta'  => array( 'class' => 'hit-counter', 'title' => __( 'Post Hit Counter settings', 'post-hit-counter' ) )
 					);

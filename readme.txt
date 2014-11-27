@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate
 Tags: post, views, counter, hits
 Requires at least: 4.0
 Tested up to: 4.0.1
-Stable tag: 1.1
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,11 +16,12 @@ A counter to track how many times your posts are viewed.
 
 **Plugin Features**
 
-- Setting to select which post types must be counted
-- Setting to select which user roles should not activate the hit counter
+- Option to select which post types must be counted
+- Option to select which user roles should not activate the hit counter
 - Easy visible hit counts in the dashboard and in the admin bar on the frontend
+- No complicated analytics and statistics to wade through
 
-This is not meant as a replacement for more advanced analytics plugins - it is merely a simple counter so you can see which of your posts are more popular without diving too deeply into complicated viewing statistics.
+This is not meant as a replacement for more advanced analytics plugins - it is a counter so you can see which of your posts are more popular without diving too deeply into complicated viewing statistics.
 
 *This plugin was created as a demo for [a workshop](http://2014.capetown.wordcamp.org/session/building-your-first-wordpress-plugin/) I ran at WordCamp Cape Town 2014. I have since fleshed it out and enhanced it to be more useful.*
 
@@ -43,6 +44,10 @@ Installing "Post Hit Counter" can be done either by searching for "Post Hit Coun
 
 == Changelog ==
 
+= 1.1.1 =
+* 2014-11-27
+* [TWEAK] Changing 'Hits' to 'Hit' in admin bar when hit counter is on 1
+
 = 1.1 =
 * 2014-11-24
 * [NEW] Adding support for all post types
@@ -56,6 +61,10 @@ Installing "Post Hit Counter" can be done either by searching for "Post Hit Coun
 * Initial release #boom
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+* 2014-11-27
+* Changing 'Hits' to 'Hit' in admin bar when hit counter is on 1
 
 = 1.1 =
 * 2014-11-24
