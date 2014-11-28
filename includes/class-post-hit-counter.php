@@ -129,6 +129,13 @@ class Post_Hit_Counter {
 		// Load admin CSS
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ), 10, 1 );
 
+		// Load widgets
+		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
+		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widgets' ) );
+
+		// Add shortcodes
+		add_shortcode( 'post_views', array( $this, 'post_views_shortcode' ) );
+
 		if( ! $this->active_types ) {
 			$post_types = get_post_types();
 		} else {
@@ -138,6 +145,7 @@ class Post_Hit_Counter {
 		foreach( $post_types as $type ) {
 			add_filter( 'manage_edit-' . $type . '_sortable_columns', array( $this, 'sortable_columns' ) );
 		}
+		add_action( 'pre_get_posts', array( $this, 'sort_column' ) );
 
 		// Load API for generic admin functions
 		if( is_admin() ) {
@@ -257,6 +265,18 @@ class Post_Hit_Counter {
 	}
 
 	/**
+	 * Handle sorting of list table by hits
+	 * @param  object $query Default query array
+	 * @return void
+	 */
+	public function sort_column ( $query ) {
+		if ( is_admin() && $query->is_main_query() && 'hits' == $query->get( 'orderby' ) ) {
+			$query->set( 'meta_key', $this->_field );
+			$query->set( 'orderby', 'meta_value_num' );
+		}
+	}
+
+	/**
 	 * DIsplay post views on post edit screen
 	 * @return void
 	 */
@@ -325,6 +345,97 @@ class Post_Hit_Counter {
 	}
 
 	/**
+	 * Register frontend widgets
+	 * @return void
+	 */
+	public function register_widgets () {
+		register_widget( 'Post_Hit_Counter_Widget_Most_Viewed_Posts' );
+	}
+
+	/**
+	 * Register dashboard widgets
+	 * @return void
+	 */
+	public function register_dashboard_widgets () {
+		wp_add_dashboard_widget( 'most-viewed-posts', apply_filters( $this->_token . '_dashboard_widget_title', __( 'Most Viewed Posts', 'post-hit-counter' ) ), array( $this, 'dashboard_widget' ) );
+	}
+
+	/**
+	 * Add content to dashboard widget
+	 * @return void
+	 */
+	public function dashboard_widget () {
+		$args = apply_filters( 'dashboard_widget_most_viewed_posts_args', array(
+			'post_type'			  => 'post',
+			'posts_per_page'      => 5,
+			'no_found_rows'       => true,
+			'post_status'         => 'publish',
+			'ignore_sticky_posts' => true,
+			'meta_key'			  => $this->_field,
+			'orderby'			  => 'meta_value_num'
+		) );
+
+		$posts = new WP_Query( $args );
+
+		$html = '';
+
+		if ( $posts->have_posts() ) {
+
+			$html .= '<ul>';
+
+			while ( $posts->have_posts() ) {
+				$posts->the_post();
+
+				$views = intval( get_post_meta( get_the_ID(), $this->_field, true ) );
+
+				$format = __( '<span>%1$s hits</span> <a href="%2$s">%3$s</a>', 'post-hit-counter' );
+				$html .= sprintf( '<li>' . $format . '</li>', $views, get_edit_post_link(), _draft_or_post_title() );
+			}
+
+			$html .= '</ul>';
+		} else {
+			$html .= '<p><em>' . __( 'No viewed posts.', 'post-hit-counter' ) . '</em></p>';
+		}
+
+		echo $html;
+	}
+
+	/**
+	 * Shortcode for displaying views for single post
+	 * @param  array  $atts Shortcode attributes
+	 * @return string       HTML output of shortcode
+	 */
+	public function post_views_shortcode ( $atts = array() ) {
+
+		// Parse parameters
+		$atts = shortcode_atts( array(
+			'post' => 0,
+		), $atts, 'post_views' );
+
+		$html = '';
+		$post_id = 0;
+
+		// Get post ID to use
+		if( $atts['post'] ) {
+			$post_id = $atts['post'];
+		} else {
+			global $post;
+			if( isset( $post->ID ) ) {
+				$post_id = $post->ID;
+			}
+		}
+
+		// Get shortcode output
+		if( $post_id ) {
+			$views = intval( get_post_meta( $post_id, $this->_field, true ) );
+			$html = '<span class="post-views">' . sprintf( __( 'Views: %d', 'post-hit-counter' ), $views ) . '</span>';
+		}
+
+		// Return output
+		return apply_filters( $this->_token . '_post_views_shortcode_html', $html );
+	}
+
+	/**
 	 * Load frontend CSS.
 	 * @access  public
 	 * @since   1.1.0
@@ -341,6 +452,7 @@ class Post_Hit_Counter {
 				}
 			}
 		}
+
 	} // End enqueue_styles ()
 
 	/**
@@ -352,7 +464,7 @@ class Post_Hit_Counter {
 	public function admin_enqueue_styles ( $hook = '' ) {
 		global $pagenow, $typenow;
 
-		if( ( 'post.php' == $pagenow && $this->count_post_type( $typenow ) ) || ( isset( $_GET['page'] ) && 'post_hit_counter_settings' == $_GET['page'] ) ) {
+		if( 'index.php' == $pagenow || ( 'post.php' == $pagenow && $this->count_post_type( $typenow ) ) || ( isset( $_GET['page'] ) && 'post_hit_counter_settings' == $_GET['page'] ) ) {
 			wp_register_style( $this->_token . '-admin', esc_url( $this->assets_url ) . 'css/admin.css', array(), $this->_version );
 			wp_enqueue_style( $this->_token . '-admin' );
 		}

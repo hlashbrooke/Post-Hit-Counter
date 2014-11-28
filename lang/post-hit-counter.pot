@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Post Hit Counter package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Post Hit Counter 1.1.1\n"
+"Project-Id-Version: Post Hit Counter 1.2\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/Post-Hit-Counter\n"
-"POT-Creation-Date: 2014-11-27 05:38:46+00:00\n"
+"POT-Creation-Date: 2014-11-28 08:55:06+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -38,27 +38,46 @@ msgstr ""
 
 #: includes/class-post-hit-counter-settings.php:285
 #: includes/class-post-hit-counter-settings.php:294
-#: includes/class-post-hit-counter.php:409
-#: includes/class-post-hit-counter.php:418
+#: includes/class-post-hit-counter.php:521
+#: includes/class-post-hit-counter.php:530
 msgid "Cheatin&#8217; huh?"
 msgstr ""
 
-#: includes/class-post-hit-counter.php:196
+#: includes/class-post-hit-counter.php:204
 msgid "Hits"
 msgstr ""
 
-#: includes/class-post-hit-counter.php:238
+#: includes/class-post-hit-counter.php:246
 msgid "1 Hit"
 msgid_plural "%s Hits"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-post-hit-counter.php:240
+#: includes/class-post-hit-counter.php:248
 msgid "Post Hit Counter settings"
 msgstr ""
 
-#: includes/class-post-hit-counter.php:272
+#: includes/class-post-hit-counter.php:292
 msgid "Hits:"
+msgstr ""
+
+#: includes/class-post-hit-counter.php:360
+#: includes/widgets/class-post-hit-counter-widget-most-viewed-posts.php:11
+#: includes/widgets/class-post-hit-counter-widget-most-viewed-posts.php:45
+msgid "Most Viewed Posts"
+msgstr ""
+
+#: includes/class-post-hit-counter.php:391
+msgid "<span>%1$s hits</span> <a href=\"%2$s\">%3$s</a>"
+msgstr ""
+
+#: includes/class-post-hit-counter.php:397
+msgid "No viewed posts."
+msgstr ""
+
+#: includes/class-post-hit-counter.php:431
+#: includes/widgets/class-post-hit-counter-widget-most-viewed-posts.php:79
+msgid "Views: %d"
 msgstr ""
 
 #: includes/lib/class-post-hit-counter-admin-api.php:159
@@ -75,6 +94,26 @@ msgstr ""
 
 #: includes/lib/class-post-hit-counter-admin-api.php:160
 msgid "Remove image"
+msgstr ""
+
+#: includes/widgets/class-post-hit-counter-widget-most-viewed-posts.php:9
+msgid "Your site&#8217;s most viewed Posts."
+msgstr ""
+
+#: includes/widgets/class-post-hit-counter-widget-most-viewed-posts.php:123
+msgid "Title:"
+msgstr ""
+
+#: includes/widgets/class-post-hit-counter-widget-most-viewed-posts.php:126
+msgid "Number of posts to show:"
+msgstr ""
+
+#: includes/widgets/class-post-hit-counter-widget-most-viewed-posts.php:130
+msgid "Display post hit count?"
+msgstr ""
+
+#: includes/widgets/class-post-hit-counter-widget-most-viewed-posts.php:133
+msgid "Display post date?"
 msgstr ""
 #. Plugin Name of the plugin/theme
 msgid "Post Hit Counter"
