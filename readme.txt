@@ -3,8 +3,8 @@ Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate
 Tags: post, views, counter, hits, analytics, stats, statistics, count
 Requires at least: 4.0
-Tested up to: 4.0.1
-Stable tag: 1.2
+Tested up to: 4.1.1
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,7 +54,27 @@ Installing "Post Hit Counter" can be done either by searching for "Post Hit Coun
 
 When you order posts by hit count in the post list table in the dashboard it will not show posts that have 0 hits. This is due to a limitation in WordPress itself, which will (most likely) be fixed in future versions. Once WordPress is able to accommodate this then I will update the plugin to work accordingly
 
+= What is the shortcode for displaying the post hit count? =
+
+The shortcode to display an individual post's hit count is: `[hit_count]`. If you use the shortcode without any parameters then it will displaying the hit count for the current post. Alternatively you can specify which post's hit count you would like to display by using the shortcode like this: `[hit_count post=123]` where `123` is the ID of the post.
+
+= How do I reset the hit count for a post? =
+
+On the post edit screen, there is a refresh icon next to the hit count - simply click that and the hit count for that post will be reset to 0 without reloading the page.
+
 == Changelog ==
+
+= 1.3.1 =
+* 2015-02-19
+* [FIX] Fixing 'Undefined property' on post edit screen
+
+= 1.3 =
+* 2014-12-10
+* [NEW] Adding button to reset hit count for specific post
+
+= 1.2.1 =
+* 2014-12-05
+* [TWEAK] Renaming shortcode for consistency
 
 = 1.2 =
 * 2014-11-28
@@ -81,21 +101,5 @@ When you order posts by hit count in the post list table in the dashboard it wil
 
 == Upgrade Notice ==
 
-= 1.2 =
-* Adding frontend and dashboard widgets for displaying most viewed posts as well as shortcode for showing hit count for single posts
-
-= 1.1.1 =
-* 2014-11-27
-* Changing 'Hits' to 'Hit' in admin bar when hit counter is on 1
-
-= 1.1 =
-* 2014-11-24
-* [NEW] Adding support for all post types
-* [NEW] Adding option to select which post types will be active
-* [NEW] Adding option to prevent specified user roles from triggering hit counter
-* [NEW] Adding hit counter to admin bar on frontend
-* [TWEAK] Renaming 'Views' to 'Hits' for consistency
-
-= 1.0 =
-* 2014-10-22
-* Initial release #boom
+= 1.3.1 =
+* Minor bug fix.
