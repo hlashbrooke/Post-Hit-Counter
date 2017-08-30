@@ -176,14 +176,30 @@ class Post_Hit_Counter {
 	 * @return void
 	 */
 	public function count_post_view () {
-
+ 
 		if( is_single() || is_page() ) {
 			global $post;
 			if( isset( $post->ID ) ) {
-				if( $this->count_post_type( $post->post_type ) && ! $this->block_user_role() ) {
-					$this->increment_counter( $post->ID );
-				}
+                            
+                            if( $this->count_post_type( $post->post_type ) && ! $this->block_user_role() ){
+                                $user_ip = $_SERVER['REMOTE_ADDR']; //retrieve the current IP address of the visitor
+                                $key = $user_ip . 'x' . $post->ID ; //combine post ID & IP to form unique key
+                                $value = array($user_ip, $post->ID ); // store post ID & IP as separate values (see note)
+                                $visited = get_transient($key); //get transient and store in variable
+                                //delete_transient($key); // used for delete values
+                                //print_r($visited);
+                                //exit;
+                                
+                                if (false === ( $visited )) {
+                                    //store the unique key, Post ID & IP address for 24 hours if it does not exist
+                                    set_transient($key, $value, 60 * 60 * 24);
+                                    // now run post views function
+                                    $count_key = 'views';
+                                    $this->increment_counter( $post->ID );
+                                    
+                                }
 			}
+                    }    
 		}
 	}
 
